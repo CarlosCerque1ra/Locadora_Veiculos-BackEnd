@@ -1,57 +1,70 @@
 <?php
-    namespace Services;
-    use models\{Veiculo, Carro, Moto};
+namespace Services;
 
-    // classe para gerenciar a locadora
-    class Locadora {
-        private array $veiculos = [];
+use Models\{Veiculo, Carro, Moto};
 
-        // método construtor
-        public function __construct() {
-            $this->carregarVeiculos();
-        }
+// Classe para gerenciar a locação
+class Locadora {
+    private array $veiculos = [];
+    
+    public function __construct()
+    {
+        $this->carregarVeiculos();
+    }
 
-        private function carregarVeiculos(): void {
-            // verifica se o arquivo existe
-            if (file_exists(ARQUIVO_JSON)) {
-                // lê o conteudo e decodifica o JSON para o array
-                $conteudo = json_decode(file_get_contents(ARQUIVO_JSON), true);
-                foreach ($dados as $dado){
+    private function carregarVeiculos(): void {
+        // Verificar se existe o arquivo
+        if(file_exists(ARQUIVO_JSON)){
+            // Lê o conteúdo e decodifica o JSON para o array
+            $dados = json_decode(file_get_contents(ARQUIVO_JSON), true);
 
-                    if($dado['tipo']=== 'Carro'){
-                        $veiculo = new Carro($dado['modelo'], $dado['placa']);
-                    }else{
-                        $veiculo = new Moto($dado['modelo'], $dado['placa']);
-                    }
-                    $veiculo->setDisponivel($dado['disponivel']);
-
-                    $this->veiculos[] = $veiculo;
+            foreach ($dados as $dado){
+                if ($dado['tipo']=== 'Carro'){
+                    $veiculo = new Carro($dado['modelo'], $dado['placa']);
+                } else {
+                    $veiculo = new Moto($dado['modelo'], $dado['placa']);
                 }
-            } 
-        }
-        // salvar os veiculos
-        private function salvarVeiculos(): void {
-            $dados = [];
+                $veiculo->setDisponivel($dado['disponivel']);
 
-            foreach($this->veiculos as $veiculo){
-                $dados[] = [
-                    'tipo' => ($veiculo instanceof Carro) ? 'Carro' : 'Moto',
-                    'modelo' => $veiculo->getModelo(),
-                    'placa' => $veiculo->getPlaca(),
-                    'disponivel' => $veiculo->isDisponivel()
-                ];
-
-                // abre o arquivo JSON para escrita
-                $dir = dirname(ARQUIVO_JSON); 
-
-                if (!is_dir($dir)) {
-                    // cria o diretório se não existir
-                    mkdir($dir, 0777, true);
-                }
-
-                // salva o array de veiculos no arquivo JSON
-                file_put_contents(ARQUIVO_JSON, json_encode($dados, JSON_PRETTY_PRINT));
+                $this->veiculos[] = $veiculo;
             }
         }
     }
+
+    // Salvar veículos
+    private function salvarVeiculos():void{
+       $dados = [];
+
+       foreach($this->veiculos as $veiculo){
+        $dados[] = [
+            'tipo' => ($veiculo instanceof Carro) ? 'Carro' : 'Moto',
+            'modelo' => $veiculo -> getModelo(),
+            'placa' => $veiculo -> getPlaca(),
+            'disponivel' => $veiculo -> isDisponivel()
+        ];
+
+        $dir =dirname(ARQUIVO_JSON);
+
+        if (!is_dir($dir)){
+            mkdir($dir, 0777, true);
+        }
+    }
+        file_put_contents(ARQUIVO_JSON, json_encode($dados, JSON_PRETTY_PRINT));
+       
+    }
+
+    // Adicionar novo veículo
+    public function adicionarVeiculo(Veiculo $veiculo):void{
+        $this->veiculos[] = $veiculo;
+
+        $this->salvarVeiculos();
+    }
+
+    // Remover veículo
+    // Alugar veículo por n dias
+    // Devolver veículo
+    // Retornar a lista de veículos
+    // Calcular previsão do valor
+}
+
 ?>
