@@ -1,0 +1,14 @@
+{
+    "name":"locadora/veiculos",
+    "description":"Sistema de Locadora de Veiculos",
+    "autoload":{
+        "psr-4":{
+            "Interfaces\\":"interfaces/",
+            "Models\\": "models/",
+            "Services\\": "services/"
+        }
+    },
+    "require": {
+        "php": ">=7.4"
+    }
+}

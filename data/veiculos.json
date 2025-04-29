@@ -1,0 +1,15 @@
+[
+    {
+        "tipo": "carro",
+        "modelo": "Fusca",
+        "placa": "ABC-1234",
+        "disponivel": false
+    },
+    
+    {
+        "tipo": "moto",
+        "modelo": "Honda CG 160",
+        "placa": "XYZ-5678",
+        "disponivel": true
+    }
+]
