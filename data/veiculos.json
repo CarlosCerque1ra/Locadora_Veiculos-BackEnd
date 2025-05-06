@@ -1,15 +1,20 @@
 [
     {
-        "tipo": "carro",
-        "modelo": "Fusca",
-        "placa": "ABC-1234",
+        "tipo": "Carro",
+        "modelo": "Ferrari",
+        "placa": "ABC1D23",
         "disponivel": false
     },
-    
     {
-        "tipo": "moto",
-        "modelo": "Honda CG 160",
-        "placa": "XYZ-5678",
+        "tipo": "Moto",
+        "modelo": "BIS",
+        "placa": "ABC5D84",
+        "disponivel": true
+    },
+    {
+        "tipo": "Carro",
+        "modelo": "Lancer",
+        "placa": "AKJ1D94",
         "disponivel": true
     }
 ]
