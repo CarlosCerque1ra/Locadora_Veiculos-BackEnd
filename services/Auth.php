@@ -36,7 +36,7 @@ class Auth{
                 'perfil' => 'usuario',
                 ],
                 [
-                'username' => 'Gutin',
+                'username' => 'Miguel',
                 'password' => password_hash('user123', PASSWORD_DEFAULT),
                 'perfil' => 'admin',
                 ]

@@ -1,76 +1,81 @@
 <?php
 
-// Incluir o autoload
-require_once __DIR__ . '/../vendor/autoload.php';
+    // incluir o autoload
+    require_once __DIR__ . '/../vendor/autoload.php';
 
-// Incluir o arquivo com as variáveis
-require_once __DIR__ . '/../config/config.php';
+    // incluir o arquivo com as variáveis
+    require_once __DIR__ . '/../config/config.php';
 
-session_start();
+    session_start();
 
-// Importar as classes Locadora e Auth
-use Services\{Locadora, Auth};
+    // importar as classes Locadora e Auth
+    use Services\{Locadora, Auth};
 
-// Importar as classes Carro e Moto
-use Models\{Carro, Moto};
+    // inportar as classes Carro e moto
+    use Models\{Carro, Moto};
 
-// Verifica se o usuário está logado
-if (!Auth::verificarLogin()) {
-    header('Location: login.php');
-    exit;
-}
+    // Verifica se o usuário está logado
+    if(!Auth::verificarLogin()){
+        header('Location: login.php');
+        exit;
+    }
 
-// Condição para logout
-if (isset($_GET['logout'])) {
-    (new Auth())->logout();
-    header('Location: login.php');
-    exit;
-}
+    // Condição para logout
+    if(isset($_GET['logout'])){
+        (new Auth())->logout();
+        header('Location: login.php');
+        exit;   
+    }
 
-// Criar uma instância da classe Locadora
-$locadora = new Locadora();
+    // Criar uma instância da classe Locadora
+    $locadora = new Locadora();
 
-$mensagem = '';
+    $mensagem = '';
 
-$usuario = Auth::getUsuario();
+    $usuario = Auth::getUsuario();
 
-// Verifica os dados do formulário via POST
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // veriifica os dados do formupario via POST
+    if($_SERVER['REQUEST_METHOD'] === 'POST'){
 
-    // Verificar se requer permissão de administrador
-    if (isset($_POST['adicionar']) || isset($_POST['deletar']) || isset($_POST['alugar']) || isset($_POST['devolver'])) {
+        // verificar se requer permissão de administrador
+        if(isset($_POST['adicionar']) || isset($_POST['deletar']) || isset($_POST['alugar']) || isset($_POST['devolver'])){
 
-        if (!Auth::isAdmin()) {
-            $mensagem = "Você não tem permissão para realizar essa ação.";
-            goto renderizar;
+            if(!Auth::isAdmin()){
+                $mensagem = "Você não tem permissão para realizar essa ação.";
+                goto renderizar;
+            }
         }
+
+        if(isset($_POST['adicionar'])){
+            $modelo = $_POST['modelo'];
+            $placa = $_POST['placa'];
+            $tipo = $_POST['tipo'];
+
+            $veiculo = ($tipo == 'Carro') ? new Carro($modelo, $placa) : new Moto($modelo, $placa);
+
+            $locadora->adicionarVeiculo($veiculo);
+
+            $mensagem = "Veículo adicionado com sucesso!";
+        }
+        elseif(isset($_POST['alugar'])){
+            $dias = isset($_POST['dias']) ? (int)$_POST['dias'] :1;
+            $mensagem = $locadora->alugarVeiculo($_POST['modelo'], $dias);
+        }
+        elseif(isset($_POST['devolver'])){
+            $mensagem = $locadora->devolverVeiculo($_POST['modelo']);
+        }
+        elseif(isset($_POST['deletar'])){
+            $mensagem = $locadora->deletarVeiculo($_POST['modelo'], $_POST['placa']);
+        }
+        elseif(isset($_POST['calcular'])){
+            $dias = (int)$_POST['dias_calculo'];
+            $tipo = $_POST['tipo_calculo'];
+            $valor = $locadora->calcularPrevisaoAluguel($dias, $tipo);
+
+            $mensagem = "Previsão de valor para {$dias} dias: R$ " . number_format($valor, 2, ',','.');
+        }
+
     }
 
-    if (isset($_POST['adicionar'])) {
-        $modelo = $_POST['modelo'];
-        $placa = $_POST['placa'];
-        $tipo = $_POST['tipo'];
-
-        $veiculo = (strtolower($tipo) == 'carro') ? new Carro($modelo, $placa) : new Moto($modelo, $placa);
-
-        $locadora->adicionarVeiculo($veiculo);
-
-        $mensagem = "Veículo adicionado com sucesso!";
-    } elseif (isset($_POST['alugar'])) {
-        $dias = isset($_POST['dias']) ? (int)$_POST['dias'] : 1;
-        $mensagem = $locadora->alugarVeiculo($_POST['modelo'], $dias);
-    } elseif (isset($_POST['devolver'])) {
-        $mensagem = $locadora->devolverVeiculo($_POST['modelo']);
-    } elseif (isset($_POST['deletar'])) {
-        $mensagem = $locadora->deletarVeiculo($_POST['modelo'], $_POST['placa']);
-    } elseif (isset($_POST['calcular'])) {
-        $dias = (int)$_POST['dias_calculo'];
-        $tipo = $_POST['tipo_calculo'];
-        $valor = $locadora->calcularAluguel($tipo, $dias);
-
-        $mensagem = "Previsão de valor para {$dias} dias: R$ " . number_format($valor, 2, ',', '.');
-    }
-}
-
-renderizar:
-require_once __DIR__ . '/../viws/template.php';
+    renderizar:
+    require_once __DIR__ . '/../views/template.php';

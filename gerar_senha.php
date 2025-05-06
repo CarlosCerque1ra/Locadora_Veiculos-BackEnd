@@ -1,5 +1,5 @@
 <?php
-$senha = '123'; // senha padrão
+$senha = 'user'; // senha padrão
 $hash_admin = password_hash($senha, PASSWORD_DEFAULT); // gera o hash da senha
 $hash_usuario = password_hash($senha, PASSWORD_DEFAULT); // gera o hash do usuário
 

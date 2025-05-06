@@ -1,40 +1,43 @@
 <?php 
 
-// Incluir o autoload do composer para carregar automaticamente as classes utilizadas
-require_once __DIR__ . '/../vendor/autoload.php';
+    // incuir o auto load do composer para carregar automaticamente as classes utilizadas
+    require_once __DIR__ . '/../vendor/autoload.php';
 
-// Incluir o arquivo com as variáveis
-require_once __DIR__ . '/../config/config.php';
+    // incluir o arquivo com as variaveis
+    require_once __DIR__ . '/../config/config.php';
 
-session_start();
+    session_start();
 
-// Inserir a classe de autenticação
-use Services\Auth;
+    // inserir a classe de autenticação
+    use Services\Auth;
 
-// Inicializa a variável para mensagens de erro
-$mensagem = '';
+    // Inicializa a variável para mensagens de erro
+    $mensagem = '';
 
-// Instanciar a classe de autenticação
-$auth = new Auth();
+    // instanciar a classe de autenticação
+    $auth = new Auth();
 
-// Verifica se já foi autenticado
-if (Auth::verificarLogin()) {
-    header('Location: index.php');
-    exit;
-}
-
-// Verifica se o formulário foi enviado
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
-
-    if ($auth->login($username, $password)) {
+    // verifica se já foi autenticado
+    if (Auth::verificarLogin()) {
+        echo "Usuário já autenticado. Redirecionando...";
         header('Location: index.php');
         exit;
-    } else {
-        $mensagem = 'Usuário ou senha incorretos!';
     }
-}
+
+    // verifica se o formulário foi enviado
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        echo "Formulário enviado. Verificando login...";
+        $username = $_POST['username'] ?? '';
+        $password = $_POST['password'] ?? '';
+    
+        if ($auth->login($username, $password)) {
+            echo "Login bem-sucedido. Redirecionando...";
+            header('Location: index.php');
+            exit;
+        } else {
+            $mensagem = 'Usuário ou senha incorretos!';
+        }
+    }
 
 ?>
 
@@ -75,12 +78,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
                 <form action="" method="post" class="needs-validation" novalidate>
                     <div class="mb-3">
-                        <label for="username" class="form-label">Usuário:</label>
-                        <input type="text" placeholder="Digite seu usuário" name="username" class="form-control" required autocomplete="off" id="username">
+                        <label for="" class="form-label">Usuario:</label>
+                        <input type="text" placeholder="Digite seu usuario" name="username" class="form-control" require autocomplete="off">
                     </div>
                     <div class="mb-3 position-relative">
                         <label for="password" class="form-label">Senha:</label>
-                        <input type="password" placeholder="Digite sua senha" name="password" class="form-control" id="password" required>
+                        <input type="password" placeholder="Digite sua senha" name="password" class="form-control" id="password" require>
                         <span class="password-toggle mt-3" onclick="togglePassword()"><i class="bi bi-eye-slash-fill" id="olho"></i></span>
                     </div>
                     <button type="submit" class="btn btn-success w-100">Entrar</button>
